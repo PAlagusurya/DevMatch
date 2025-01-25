@@ -27,6 +27,35 @@ app.post("/signup", async (req, res) => {
   }
 });
 
+app.patch("/signup/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    const user = await User.findOneAndUpdate({ emailId: id });
+    console.log(user);
+    if (!user) {
+      return res.status(404).send("User not found");
+    }
+    // Incrementing age, which is a non-idempotent operation
+    user.age += 1;
+    await user.save();
+    res.status(200).json(user);
+  } catch (err) {
+    res.status(400).send("Something went wrong");
+  }
+});
+
+app.put("/signup/:id", async (req, res) => {
+  const data = req.body;
+  const { id } = req.params;
+
+  try {
+    await User.findOneAndUpdate({ _id: id }, data);
+    res.send("User updated successfully");
+  } catch (err) {
+    res.status(400).send("Something went wrong");
+  }
+});
+
 connectDB()
   .then(() => {
     console.log("connected to DB successfully");

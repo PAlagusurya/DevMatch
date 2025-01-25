@@ -83,3 +83,22 @@ When passing data over the network, it is transmitted as **streams** or **chunks
 ## Summary
 
 - `app.all()` is a final route handler, while `app.use()` is middleware that runs before or after the actual route handler.
+
+---
+
+# PUT vs PATCH
+
+## PUT
+
+- **Full replacement of resource**: Use **PUT** when you want to replace the entire resource with a new one.
+- **Idempotent**: Making the same **PUT** request multiple times will always have the same result.
+
+## PATCH
+
+- **Partial update to resource**: Use **PATCH** when you want to update only specific fields or part of the resource.
+- **Not necessarily Idempotent**: Making the same **PATCH** request multiple times may have different results, depending on the server's handling.
+
+### Quick Rule:
+
+- **PUT** = Full replacement of resource.
+- **PATCH** = Partial update to resource.
