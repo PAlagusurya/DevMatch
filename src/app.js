@@ -23,24 +23,40 @@ app.post("/signup", async (req, res) => {
     await new User(data).save();
     res.send("User created successfully");
   } catch (err) {
-    res.status(400).send("Something went wrong");
+    res.status(400).send(err.message);
   }
 });
 
-app.patch("/signup/:id", async (req, res) => {
+app.patch("/user/:id", async (req, res) => {
   const { id } = req.params;
+  const data = req.body;
+
   try {
-    const user = await User.findOneAndUpdate({ emailId: id });
-    console.log(user);
+    const ALLOWED_UPDATES = [
+      "skills",
+      "gender",
+      "password",
+      "photoURL",
+      "about",
+    ];
+    const isUpdateAllowed = Object.keys(data).every((data) =>
+      ALLOWED_UPDATES.includes(data)
+    );
+    if (!isUpdateAllowed) {
+      throw new Error("Update not allowed");
+    }
+    const user = await User.findByIdAndUpdate({ _id: id }, data, {
+      runValidators: true,
+    });
     if (!user) {
       return res.status(404).send("User not found");
     }
-    // Incrementing age, which is a non-idempotent operation
-    user.age += 1;
-    await user.save();
-    res.status(200).json(user);
+    //Incrementing age, which is a non-idempotent operation
+    // user.age += 1;
+    // await user.save();
+    res.send("User updated successfully!");
   } catch (err) {
-    res.status(400).send("Something went wrong");
+    res.status(400).send(err.message);
   }
 });
 
