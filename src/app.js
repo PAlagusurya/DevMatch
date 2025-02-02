@@ -2,6 +2,8 @@ const express = require("express");
 const connectDB = require("./config/database");
 const User = require("./models/user");
 const app = express();
+const { validateSignUpData } = require("./utils/validate");
+const bcrypt = require("bcrypt");
 
 require("dotenv").config();
 
@@ -18,12 +20,49 @@ app.get("/feed", async (req, res) => {
 });
 
 app.post("/signup", async (req, res) => {
-  const data = req.body;
+  const { firstName, lastName, emailId, password } = req.body;
+
   try {
-    await new User(data).save();
+    // Validation
+    validateSignUpData(req);
+
+    //encrypt password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const user = new User({
+      firstName,
+      lastName,
+      emailId,
+      password: hashedPassword,
+    });
+
+    await user.save();
+
     res.send("User created successfully");
   } catch (err) {
     res.status(400).send(err.message);
+  }
+});
+
+app.post("/login", async (req, res) => {
+  try {
+    const { emailId, password } = req.body;
+    //Check if this user with this emailId in DB
+    const user = await User.findOne({ emailId: emailId });
+
+    if (!user) {
+      throw new Error("Invalid credentials");
+    }
+
+    const isValidPassword = await bcrypt.compare(password, user.password);
+
+    if (isValidPassword) {
+      res.send("User Loggedin successfully!");
+    } else {
+      throw new Error("Invalid credentials");
+    }
+  } catch (e) {
+    res.status(400).send("ERROR:" + e.message);
   }
 });
 
