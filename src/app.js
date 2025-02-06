@@ -4,20 +4,17 @@ const User = require("./models/user");
 const app = express();
 const { validateSignUpData } = require("./utils/validate");
 const bcrypt = require("bcrypt");
+const cookieParser = require("cookie-parser");
+const jwt = require("jsonwebtoken");
+const { userAuth } = require("./middlewares/auth");
 
 require("dotenv").config();
 
 // Middleware to parse JSON data
 app.use(express.json());
 
-app.get("/feed", async (req, res) => {
-  try {
-    const users = await User.find();
-    res.send(users);
-  } catch (err) {
-    res.status(400).send("Something went wrong");
-  }
-});
+//Middlewarse to parse cookies
+app.use(cookieParser());
 
 app.post("/signup", async (req, res) => {
   const { firstName, lastName, emailId, password } = req.body;
@@ -54,10 +51,13 @@ app.post("/login", async (req, res) => {
       throw new Error("Invalid credentials");
     }
 
-    const isValidPassword = await bcrypt.compare(password, user.password);
+    const isValidPassword = user.validatePassword(password);
 
     if (isValidPassword) {
-      res.send("User Loggedin successfully!");
+      const token = user.getJWTToken();
+
+      res.cookie("token", token, { expires: new Date(Date.now() + 3600000) });
+      res.send("Logged in successfully");
     } else {
       throw new Error("Invalid credentials");
     }
@@ -66,48 +66,13 @@ app.post("/login", async (req, res) => {
   }
 });
 
-app.patch("/user/:id", async (req, res) => {
-  const { id } = req.params;
-  const data = req.body;
-
+app.get("/profile", userAuth, async (req, res) => {
   try {
-    const ALLOWED_UPDATES = [
-      "skills",
-      "gender",
-      "password",
-      "photoURL",
-      "about",
-    ];
-    const isUpdateAllowed = Object.keys(data).every((data) =>
-      ALLOWED_UPDATES.includes(data)
-    );
-    if (!isUpdateAllowed) {
-      throw new Error("Update not allowed");
-    }
-    const user = await User.findByIdAndUpdate({ _id: id }, data, {
-      runValidators: true,
-    });
-    if (!user) {
-      return res.status(404).send("User not found");
-    }
-    //Incrementing age, which is a non-idempotent operation
-    // user.age += 1;
-    // await user.save();
-    res.send("User updated successfully!");
-  } catch (err) {
-    res.status(400).send(err.message);
-  }
-});
+    const user = req.user;
 
-app.put("/signup/:id", async (req, res) => {
-  const data = req.body;
-  const { id } = req.params;
-
-  try {
-    await User.findOneAndUpdate({ _id: id }, data);
-    res.send("User updated successfully");
-  } catch (err) {
-    res.status(400).send("Something went wrong");
+    res.send(user);
+  } catch (e) {
+    res.status(400).send("ERROR:" + e.message);
   }
 });
 
