@@ -102,3 +102,24 @@ When passing data over the network, it is transmitted as **streams** or **chunks
 
 - **PUT** = Full replacement of resource.
 - **PATCH** = Partial update to resource.
+
+## Why should we expire cookie when logging out?
+
+### What Happens Without `expires`?
+
+- The cookie remains in the browser even if its value is `null` or `""`.
+- The browser does not automatically delete session cookies unless instructed.
+- The backend still receives `"token=null"` or `"token="`, which could cause a **"malformed JWT"** error.
+- JWT middleware may attempt to verify the token and fail if the value is invalid.
+
+### How `expires` Fixes It
+
+When you set `expires: new Date(0)`, the browser **completely removes** the cookie, so:
+
+- The client won’t send the cookie in future requests.
+- The backend won’t even see `"token="`, preventing the "malformed JWT" issue.
+
+### Conclusion
+
+✅ **Without `expires`**, the cookie exists but contains an invalid value.  
+✅ **With `expires`**, the cookie is truly removed, preventing JWT-related errors.
