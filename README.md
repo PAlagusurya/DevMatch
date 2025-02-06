@@ -24,8 +24,8 @@ npm run dev
 
 ## Features
 
-🚀 User Signup - Secure user registration with password hashing using bcrypt
-🔐 User Login - Authentication using JWT (JSON Web Token)
-🛡️ Protected Profile Route - Access control using middleware
-🍪 Cookie-Based Authentication - Stores JWT in cookies for session management
-🗄️ MongoDB Database Connection - Uses Mongoose for seamless interaction with MongoDB
+- 🚀 **User Signup** - Secure user registration with password hashing using `bcrypt`
+- 🔐 **User Login** - Authentication using JWT (JSON Web Token)
+- 🛡️ **Protected Profile Route** - Access control using middleware
+- 🍪 **Cookie-Based Authentication** - Stores JWT in cookies for session management
+- 🗄️ **MongoDB Database Connection** - Uses Mongoose for seamless interaction with MongoDB
