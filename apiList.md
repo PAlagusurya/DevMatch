@@ -6,17 +6,17 @@
 - POST /login
 - POST /logout
 
-## userRoutes
-
-- GET /user/feed
-- GET /user/requests
-- GET /user/connections
-
 ## profileRouter
 
 - GET /profile/view
 - PATCH /profile/password
 - PATCH /profile/edit
+
+## userRoutes
+
+- GET /user/feed
+- GET /user/requests
+- GET /user/connections
 
 ## connectionRequestRouter
 

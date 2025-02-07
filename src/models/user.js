@@ -78,11 +78,15 @@ userSchema.methods.getJWTToken = function () {
   return token;
 };
 
-userSchema.methods.validatePassword = function (passwordInputByUser) {
+userSchema.methods.validatePassword = async function (passwordInputByUser) {
   const user = this;
   const hasedPassword = user.password;
 
-  const isValidPassword = bcrypt.compare(passwordInputByUser, hasedPassword);
+  const isValidPassword = await bcrypt.compare(
+    passwordInputByUser,
+    hasedPassword
+  );
+
   return isValidPassword;
 };
 
