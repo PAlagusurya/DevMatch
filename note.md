@@ -123,3 +123,29 @@ When you set `expires: new Date(0)`, the browser **completely removes** the cook
 
 ✅ **Without `expires`**, the cookie exists but contains an invalid value.  
 ✅ **With `expires`**, the cookie is truly removed, preventing JWT-related errors.
+
+## 🚫 Disadvantages of Indexing All Fields in Mongoose
+
+- **📦 Increased Storage Usage**
+
+  - Indexes take up additional disk space, leading to higher storage costs.
+
+- **🐌 Slower Write Operations**
+
+  - Inserts, updates, and deletes become slower as all indexes need to be updated.
+
+- **💾 High Memory Consumption**
+
+  - Too many indexes consume more RAM, which can impact database performance.
+
+- **🔍 Query Performance Issues**
+
+  - The query planner may pick inefficient indexes, slowing down queries instead of optimizing them.
+
+- **❌ Unnecessary Indexes**
+  - Not all fields are queried frequently, making many indexes redundant.
+
+### ✅ **Best Practices**
+
+- Index only the fields frequently used in queries.
+- Use **compound indexes** instead of separate indexes on individual fields.
