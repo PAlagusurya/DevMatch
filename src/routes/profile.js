@@ -12,7 +12,7 @@ profileRouter.get("/profile/view", userAuth, async (req, res) => {
   try {
     const user = req.user;
 
-    res.send(user);
+    res.json({ data: user });
   } catch (e) {
     res.status(400).send("ERROR:" + e.message);
   }
@@ -31,9 +31,10 @@ profileRouter.patch("/profile/edit", userAuth, async (req, res) => {
 
   await loggedInUser.save();
 
-  res.send(
-    loggedInUser.firstName + " your profile has been updated successfully!"
-  );
+  res.json({
+    message:
+      loggedInUser.firstName + " your profile has been updated successfully!",
+  });
 });
 
 profileRouter.patch("/profile/password", userAuth, async (req, res) => {
@@ -55,7 +56,7 @@ profileRouter.patch("/profile/password", userAuth, async (req, res) => {
 
     await loggedInUser.save();
 
-    res.send("Password has been updated successfully!");
+    res.json({ message: "Password has been updated successfully!" });
   } catch (e) {
     res.status(400).send("ERROR:" + e.message);
   }

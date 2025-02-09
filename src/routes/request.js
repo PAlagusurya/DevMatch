@@ -45,11 +45,12 @@ requestRouter.post(
       });
 
       await connectionRequest.save();
-      res.send(
-        status === "ignored"
-          ? `${req.user.firstName} ${status} ${toUser.firstName}`
-          : `${req.user.firstName} is ${status} in  ${toUser.firstName}`
-      );
+      res.json({
+        message:
+          status === "ignored"
+            ? `${req.user.firstName} ${status} ${toUser.firstName}`
+            : `${req.user.firstName} is ${status} in  ${toUser.firstName}`,
+      });
     } catch (e) {
       res.status(400).send("ERROR:" + e.message);
     }
