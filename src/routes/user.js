@@ -11,6 +11,7 @@ const ALLOWED_USER_FIELDS = [
   "skills",
   "about",
   "age",
+  "photoURL",
 ];
 
 userRouter.get("/user/requests/received", userAuth, async (req, res) => {
