@@ -6,9 +6,8 @@ const User = require("../models/user");
 const authRouter = express.Router();
 
 authRouter.post("/signup", async (req, res) => {
-  const { firstName, lastName, emailId, password } = req.body;
-
   try {
+    const { firstName, lastName, emailId, password } = req.body;
     // Validation
     validateSignUpData(req);
 
@@ -22,9 +21,12 @@ authRouter.post("/signup", async (req, res) => {
       password: hashedPassword,
     });
 
-    await user.save();
+    const savedUser = await user.save();
+    const token = savedUser.getJWTToken();
 
-    res.json({ message: "User created successfully" });
+    res.cookie("token", token, { expires: new Date(Date.now() + 3600000) });
+
+    res.json({ message: "User created successfully", data: savedUser });
   } catch (err) {
     res.status(400).send(err.message);
   }

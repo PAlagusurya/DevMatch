@@ -19,22 +19,27 @@ profileRouter.get("/profile/view", userAuth, async (req, res) => {
 });
 
 profileRouter.patch("/profile/edit", userAuth, async (req, res) => {
-  if (!validateEditProfileData(req)) {
-    throw new Error("Make sure you are updating the allowed fields only!");
+  try {
+    if (!validateEditProfileData(req)) {
+      throw new Error("Make sure you are updating the allowed fields only!");
+    }
+
+    const loggedInUser = req.user;
+
+    Object.keys(req.body).forEach(
+      (field) => (loggedInUser[field] = req.body[field])
+    );
+
+    await loggedInUser.save();
+
+    res.json({
+      message:
+        loggedInUser.firstName + " your profile has been updated successfully!",
+      data: loggedInUser,
+    });
+  } catch (err) {
+    res.status(400).send("ERROR : " + err.message);
   }
-
-  const loggedInUser = req.user;
-
-  Object.keys(req.body).forEach(
-    (field) => (loggedInUser[field] = req.body[field])
-  );
-
-  await loggedInUser.save();
-
-  res.json({
-    message:
-      loggedInUser.firstName + " your profile has been updated successfully!",
-  });
 });
 
 profileRouter.patch("/profile/password", userAuth, async (req, res) => {
