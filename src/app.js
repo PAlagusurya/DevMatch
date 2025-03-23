@@ -8,7 +8,7 @@ require("dotenv").config();
 
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: "https://devmatch-2e8p.onrender.com",
     credentials: true,
   })
 );
