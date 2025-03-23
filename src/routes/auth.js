@@ -47,7 +47,14 @@ authRouter.post("/login", async (req, res) => {
     if (isValidPassword) {
       const token = user.getJWTToken();
 
-      res.cookie("token", token, { expires: new Date(Date.now() + 3600000) });
+      // ✅ Set cookie properly for cross-origin requests
+      res.cookie("token", token, {
+        httpOnly: true, // Prevents client-side access
+        secure: true, // Required for HTTPS
+        sameSite: "None", // Allows cross-origin cookies
+        path: "/", // Makes cookie available for all routes
+        expires: new Date(Date.now() + 3600000), // 1 hour expiration
+      });
       res.json({ data: user, message: "LoggedIn Successfully" });
     } else {
       throw new Error("Invalid credentials");
