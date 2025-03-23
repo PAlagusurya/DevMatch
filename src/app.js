@@ -8,7 +8,7 @@ require("dotenv").config();
 
 app.use(
   cors({
-    origin: "https://developertinder.netlify.app/",
+    origin: "https://developertinder.netlify.app",
     credentials: true,
   })
 );
